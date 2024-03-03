@@ -17,6 +17,7 @@ library(readxl)
 library(plyr)
 library(dplyr)
 library(tidyr)
+library(stringr)
 
 Data <- read_excel("DMA_Fatigue_Data_from_Team_Wendy_Polyurethane_LLNL-MI-860456.xlsx", skip=3)
 Data <- subset(Data, select = -c(62:64))
