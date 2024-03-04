@@ -25,11 +25,11 @@ ggplot(helmet) + geom_point(aes(x=cycleNum,y=damping,color=porosity))
 p71 <- helmet|> filter(porosity==71)
 p81 <- helmet |> filter(porosity==81)
 
-ggplot(p71,aes(x=cycleNum,y=stiffness,color=as.factor(sampleNum)))+geom_line()+geom_point()
-ggplot(p71,aes(x=cycleNum,y=damping,color=as.factor(sampleNum)))+geom_line()+geom_point()
+ggplot(p71,aes(x=cycleNum,y=stiffness,color=as.factor(sampleNum)))+geom_line()+geom_point() +labs(title="Porosity 71")
+ggplot(p71,aes(x=cycleNum,y=damping,color=as.factor(sampleNum)))+geom_line()+geom_point() + labs(title="Porosity 71")
 
-ggplot(p81,aes(x=cycleNum,y=stiffness,color=as.factor(sampleNum)))+geom_line()+geom_point()
-ggplot(p81,aes(x=cycleNum,y=damping,color=as.factor(sampleNum)))+geom_line()+geom_point()
+ggplot(p81,aes(x=cycleNum,y=stiffness,color=as.factor(sampleNum)))+geom_line()+geom_point() + labs(title = "Porosity 81")
+ggplot(p81,aes(x=cycleNum,y=damping,color=as.factor(sampleNum)))+geom_line()+geom_point()+labs(title="Porosity 81")
 ```
 
 ## What about the same thing but for chemical index?
@@ -52,16 +52,17 @@ ggplot(c121,aes(x=cycleNum,y=stiffness,color=as.factor(sampleNum)))+geom_line()+
 ggplot(c121,aes(x=cycleNum,y=damping,color=as.factor(sampleNum)))+geom_line()+geom_point()
 ```
 
-## Strain Rate vs freq and amplitude?
+## Strain Rate vs freq and amplitude? amp and strain with damping
 ```{r}
 ggplot(helmet, aes(x=strainRate,y=stiffness)) + geom_point()
-ggplot(helmet, aes(x=strainRate,y=damping)) + geom_point()
+ggplot(helmet, aes(x=strainRate,y=damping)) + geom_point() + labs(title="Damping vs Strain Rate",x="Strain Rate",y="Damping")
 
 ggplot(helmet, aes(x=freq,y=stiffness)) + geom_point()
 ggplot(helmet, aes(x=freq,y=damping)) + geom_point()
 
 ggplot(helmet, aes(x=amp,y=stiffness)) + geom_point()
-ggplot(helmet, aes(x=amp,y=damping)) + geom_point()
+ggplot(helmet, aes(x=amp,y=damping)) + geom_point() +labs(title = "Damping vs Amplitude",x="Amplitude",y="Damping")
+
 
 ```
 
