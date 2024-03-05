@@ -4,23 +4,209 @@ format: html
 editor: visual
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
+## Libraries
 ```{r}
-1 + 1
+library(ggplot2)
+library(tidyr)
+library(GGally)
+library(gplots)
+
 ```
 
-You can add options to executable code like this
-
+## Data
 ```{r}
-#| echo: false
-2 * 2
+data <- read.csv("clean_helmet.csv")
+data <- subset(data, select = -c(chemistry))
+
+data$chemIndex <- as.character(data$chemIndex)
+data$porosity <- as.character(data$porosity)
+data$sampleNum <- as.character(data$sampleNum)
+
+data <- subset(data, cycleNum <= 10000)
+data <- na.omit(data)
+
+data_stiffness <- subset(data, select = -c(damping, nonlinear))
+data_damping <- subset(data, select = -c(stiffness, nonlinear))
+data_nonlinear <- subset(data, select = -c(damping, stiffness))
+
+
+
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+## matrix of scatterplots
+```{r}
+ggpairs(subset(data_stiffness, select = -c(sampleNum)), progress = FALSE)
+
+ggpairs(subset(data_damping, select = -c(sampleNum)), progress = FALSE)
+
+
+```
+
+## Look at distribution of damping
+```{r}
+ggplot(data, aes(x=damping)) +
+  geom_histogram()
+
+ggplot(data, aes(x=stiffness)) +
+  geom_histogram()
+
+hist(data$damping, main = "Histogram of Damping")
+hist(data$stiffness, main = "Histogram of Stiffness")
+
+```
+
+## Look more closely at stiffness
+```{r}
+ggplot(data, aes(x= freq, y = stiffness)) +
+  geom_point()
+
+ggplot(data, aes(x= amp, y = stiffness)) +
+  geom_point()
+
+ggplot(data, aes(x= strainRate, y = stiffness)) +
+  geom_point()
+
+ggplot(data, aes(x= cycleNum, y = stiffness)) +
+  geom_point()
+
+ggplot(data, aes(x= strain, y = stiffness)) +
+  geom_point()
+
+ggplot(data, aes(x= stresskpa, y = stiffness)) +
+  geom_point()
+
+# strain 
+hist(data$strain, main = "Histogram of Strain")
+
+#try binning this!
+binned_strain_data <- data |> 
+  mutate(binned_strain = cut(strain, breaks = c(-Inf, -0.6, -0.35, Inf)))
+
+ggplot(binned_strain_data, aes(x=stresskpa, y=stiffness, col = binned_strain)) +
+  geom_point() +
+  geom_smooth(aes(x=stresskpa, y=stiffness, col = binned_strain), method = "lm") +
+  labs(title = "Stiffness vs stress and binned strain", col = "Binned strain") +
+  xlab("Stress") +
+  ylab("Stiffness")
+
+
+
+
+```
+
+
+## Now some boxplots for stiffness
+```{r}
+
+ggplot(data, aes(x=porosity, y = stiffness, fill= porosity)) +
+  geom_boxplot()
+
+ggplot(data, aes(x=chemIndex, y = stiffness, fill= chemIndex)) +
+  geom_boxplot()
+```
+
+
+## Look more closely at damping
+```{r}
+ggplot(data, aes(x= freq, y = damping)) +
+  geom_point()
+
+ggplot(data, aes(x= amp, y = damping)) +
+  geom_point()
+
+ggplot(data, aes(x= strainRate, y = damping)) +
+  geom_point()
+
+ggplot(data, aes(x= cycleNum, y = damping)) +
+  geom_point()
+
+ggplot(data, aes(x= strain, y = damping)) +
+  geom_point()
+
+ggplot(data, aes(x= stresskpa, y = damping)) +
+  geom_point()
+```
+
+## Now some boxplots for damping
+```{r}
+
+ggplot(data, aes(x=porosity, y = damping, fill= porosity)) +
+  geom_boxplot()
+
+ggplot(data, aes(x=chemIndex, y = damping, fill= chemIndex)) +
+  geom_boxplot()
+```
+
+
+#binned damping data
+```{r}
+
+binned_damping_data <- data |> 
+  mutate(binned_damp = cut(damping, breaks = c(-Inf, -4, -2, Inf)))
+
+
+ggplot(binned_damping_data, aes(x= freq, y = damping, col = binned_damp)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(title = "Damping vs Frequency", col = "Binned Damping") +
+  xlab("Frequency") +
+  ylab("Damping")
+
+
+
+ggplot(binned_damping_data, aes(x= amp, y = damping, col = binned_damp)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+ggplot(binned_damping_data, aes(x= strainRate, y = damping, col = binned_damp)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+ggplot(binned_damping_data, aes(x= cycleNum, y = damping, col = binned_damp)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+ggplot(binned_damping_data, aes(x= strain, y = damping, col = binned_damp)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+ggplot(binned_damping_data, aes(x= stresskpa, y = damping, col = binned_damp)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+```
+
+# Tables instead of boxplots since damping might not be continuous
+```{r}
+
+table1 <- table(binned_damping_data$binned_damp, binned_damping_data$porosity)
+
+dt1 <- as.table(as.matrix(table1))
+
+# 2. Graph
+balloonplot(t(dt1), main ="Contingency Table Balloon Plot", xlab ="Porosity", ylab="Damping (binned)",
+            label = FALSE, show.margins = FALSE)
+
+
+table2 <- table(binned_damping_data$binned_damp, binned_damping_data$chemIndex)
+
+dt2 <- as.table(as.matrix(table2))
+
+# 2. Graph
+balloonplot(t(dt2), main ="Contingency Table  Balloon Plot", xlab ="chemIndex", ylab="Damping (binned)",
+            label = FALSE, show.margins = FALSE)
+
+```
+
+
+# Analysis ideas
+For damping
+- binned damping seems like a good idea
+- logistic regression... does it extend to more than 2 levels?
+- Some type of clustering algorithm
+- PCA! What combo of variables is most important to predict damping
+
+For stiffness
+- more typical linear model
+- interaction term for stress and strain??
+- binned strain? (does this make sense scientifically?)
