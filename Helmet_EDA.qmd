@@ -5,6 +5,7 @@ editor: visual
 ---
 
 ## Libraries
+
 ```{r}
 library(ggplot2)
 library(tidyr)
@@ -14,6 +15,7 @@ library(gplots)
 ```
 
 ## Data
+
 ```{r}
 data <- read.csv("clean_helmet.csv")
 data <- subset(data, select = -c(chemistry))
@@ -34,6 +36,7 @@ data_nonlinear <- subset(data, select = -c(damping, stiffness))
 ```
 
 ## matrix of scatterplots
+
 ```{r}
 ggpairs(subset(data_stiffness, select = -c(sampleNum)), progress = FALSE)
 
@@ -43,6 +46,7 @@ ggpairs(subset(data_damping, select = -c(sampleNum)), progress = FALSE)
 ```
 
 ## Look at distribution of damping
+
 ```{r}
 ggplot(data, aes(x=damping)) +
   geom_histogram()
@@ -56,6 +60,7 @@ hist(data$stiffness, main = "Histogram of Stiffness")
 ```
 
 ## Look more closely at stiffness
+
 ```{r}
 ggplot(data, aes(x= freq, y = stiffness)) +
   geom_point()
@@ -94,8 +99,8 @@ ggplot(binned_strain_data, aes(x=stresskpa, y=stiffness, col = binned_strain)) +
 
 ```
 
-
 ## Now some boxplots for stiffness
+
 ```{r}
 
 ggplot(data, aes(x=porosity, y = stiffness, fill= porosity)) +
@@ -105,8 +110,8 @@ ggplot(data, aes(x=chemIndex, y = stiffness, fill= chemIndex)) +
   geom_boxplot()
 ```
 
-
 ## Look more closely at damping
+
 ```{r}
 ggplot(data, aes(x= freq, y = damping)) +
   geom_point()
@@ -128,6 +133,7 @@ ggplot(data, aes(x= stresskpa, y = damping)) +
 ```
 
 ## Now some boxplots for damping
+
 ```{r}
 
 ggplot(data, aes(x=porosity, y = damping, fill= porosity)) +
@@ -137,8 +143,8 @@ ggplot(data, aes(x=chemIndex, y = damping, fill= chemIndex)) +
   geom_boxplot()
 ```
 
-
 #binned damping data
+
 ```{r}
 
 binned_damping_data <- data |> 
@@ -177,6 +183,7 @@ ggplot(binned_damping_data, aes(x= stresskpa, y = damping, col = binned_damp)) +
 ```
 
 # Tables instead of boxplots since damping might not be continuous
+
 ```{r}
 
 table1 <- table(binned_damping_data$binned_damp, binned_damping_data$porosity)
@@ -198,15 +205,8 @@ balloonplot(t(dt2), main ="Contingency Table  Balloon Plot", xlab ="chemIndex", 
 
 ```
 
-
 # Analysis ideas
-For damping
-- binned damping seems like a good idea
-- logistic regression... does it extend to more than 2 levels?
-- Some type of clustering algorithm
-- PCA! What combo of variables is most important to predict damping
 
-For stiffness
-- more typical linear model
-- interaction term for stress and strain??
-- binned strain? (does this make sense scientifically?)
+For damping - binned damping seems like a good idea - logistic regression... does it extend to more than 2 levels? - Some type of clustering algorithm - PCA! What combo of variables is most important to predict damping
+
+For stiffness - more typical linear model - interaction term for stress and strain?? - binned strain? (does this make sense scientifically?)
