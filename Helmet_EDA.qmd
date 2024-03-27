@@ -120,7 +120,7 @@ ggplot(aes(x=cycleNum,y=stiffFrac,color=as.factor(round(strainRate,1)))) +geom_p
 helmet |>
   mutate(stiffFrac = abs(stiffFrac - 1)) |>
   filter(stiffFrac > 0.1) |>
-  ggplot(aes(x=cycleNum,y=stiffFrac,color=as.factor(sampleNum))) + geom_line() +geom_point()
+  ggplot(aes(x=stresskpa,y=stiffFrac))+ geom_point()
 ```
 
 ```{r}
@@ -140,7 +140,7 @@ ggplot(helmet) + geom_point(aes(x=amp,y=stiffFrac,color=as.factor(sampleNum)))
 ggplot(helmet) + geom_point(aes(x=stresskpa,y=stiffFrac))
 
 ggplot(helmet) + geom_point(aes(x=strain,y=stiffness))
-ggplot(helmet) + geom_point(aes(x=stresskpa,y=stiffness))
+ggplot(helmet) + geom_point(aes(x=stresskpa,y=stiffness)) + labs(title="Stiffness vs. Initial Stress",x="Initial Stress (kpa)",y="Stiffness")
 
 
 ```
