@@ -11,9 +11,7 @@ library(dplyr)
 library(ggplot2)
 
 helmet <- read.csv("clean_helmet.csv") |> mutate_at(c('porosity','chemIndex'), as.factor) |>
-  select(!chemistry) |> 
   filter(cycleNum <= 10000)
-helmet <- na.omit(helmet)
 ```
 
 ## What does porosity do? Do more dense materials appear to last longer? Is there no effect?

@@ -41,6 +41,9 @@ extract_name_df <- Data |>
 #split up into 4 df's and pivot longer on each subset
 cyclesDf <- subset(extract_name_df, select = c(1:8,9:22))
 stiffnessDf <- subset(extract_name_df, select = c(1:8,23:36))
+stiffF <- stiffnessDf |> 
+  mutate(
+    across(c(9:22), .fns = ~./E1_MPA_Cyc_A))
 dampingDf <- subset(extract_name_df, select = c(1:8,37:50))
 nonlinearDf <- subset(extract_name_df, select = c(1:8,51:64))
 
@@ -52,12 +55,21 @@ long_cycles <- cyclesDf |>
 long_cycles$cycleLet <- apply(cbind(long_cycles$cycleLet), 1, 
                                  function(x) substr(x, str_length(x), str_length(x)))
 # stiffness
+stiffFraction <- stiffF |>
+  pivot_longer(cols=names(stiffnessDf[9:22]),
+               names_to = "cycleLet",
+               values_to = "stiffFrac")
+stiffFraction$cycleLet <- apply(cbind(stiffFraction$cycleLet), 1, 
+                                 function(x) substr(x, str_length(x), str_length(x)))  
+
 long_stiffness <- stiffnessDf |>
   pivot_longer(cols = names(stiffnessDf[9:22]),
                names_to = "cycleLet",
                values_to = "stiffness") 
 long_stiffness$cycleLet <- apply(cbind(long_stiffness$cycleLet), 1, 
                                  function(x) substr(x, str_length(x), str_length(x)))
+long_stiffness <- long_stiffness |>
+  join(stiffFraction,by=names(long_stiffness[1:9]))
 
 # damping
 long_damping <- dampingDf |>
@@ -90,11 +102,16 @@ joined_df <- long_cycles |>
 ```{r}
 
 full_df <- joined_df |>
-  mutate(strainRate = 4*amp*freq)
+  mutate(strainRate = 4*amp*freq) 
 
 
 #reorder so sampleNum is first and get rid of cycleLet
-full_df <- full_df[, c(4, 1:3, 5:8, 10:14)]
+full_df <- full_df[, c(4, 1:3, 5:8, 10:15)]
+
+full_df <- full_df |>
+    mutate(stiffness = abs(stiffness)) |>
+  select(!chemistry) |>
+  drop_na()
 
 ```
 
