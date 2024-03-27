@@ -9,6 +9,7 @@ editor: visual
 ```{r}
 library(dplyr)
 library(ggplot2)
+library(GGally)
 
 helmet <- read.csv("clean_helmet.csv") |> mutate_at(c('porosity','chemIndex'), as.factor) |>
   filter(cycleNum <= 10000)
@@ -53,13 +54,13 @@ ggplot(c121,aes(x=cycleNum,y=damping,color=as.factor(sampleNum)))+geom_line()+ge
 ## Strain Rate vs freq and amplitude? amp and strain with damping
 ```{r}
 ggplot(helmet, aes(x=strainRate,y=stiffness)) + geom_point()
-ggplot(helmet, aes(x=strainRate,y=damping)) + geom_point() + labs(title="Damping vs Strain Rate",x="Strain Rate",y="Damping")
+#ggplot(helmet, aes(x=strainRate,y=damping)) + geom_point() + labs(title="Damping vs Strain Rate",x="Strain Rate",y="Damping")
 
 ggplot(helmet, aes(x=freq,y=stiffness)) + geom_point()
-ggplot(helmet, aes(x=freq,y=damping)) + geom_point()
+#ggplot(helmet, aes(x=freq,y=damping)) + geom_point()
 
 ggplot(helmet, aes(x=amp,y=stiffness)) + geom_point()
-ggplot(helmet, aes(x=amp,y=damping)) + geom_point() +labs(title = "Damping vs Amplitude",x="Amplitude",y="Damping")
+#ggplot(helmet, aes(x=amp,y=damping)) + geom_point() +labs(title = "Damping vs Amplitude",x="Amplitude",y="Damping")
 
 
 ```
@@ -67,26 +68,80 @@ ggplot(helmet, aes(x=amp,y=damping)) + geom_point() +labs(title = "Damping vs Am
 ## boxplot time
 ```{r}
 ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffness))
-ggplot(helmet) + geom_boxplot(aes(x=porosity,y=damping))
+#ggplot(helmet) + geom_boxplot(aes(x=porosity,y=damping))
 
 ggplot(helmet) + geom_boxplot(aes(x=chemIndex,y=stiffness))
-ggplot(helmet) + geom_boxplot(aes(x=chemIndex,y=damping))
+#ggplot(helmet) + geom_boxplot(aes(x=chemIndex,y=damping))
 
 ggplot(helmet) + geom_boxplot(aes(x=as.factor(cycleNum),y=stiffness))
-ggplot(helmet) + geom_boxplot(aes(x=as.factor(cycleNum),y=damping))
+#ggplot(helmet) + geom_boxplot(aes(x=as.factor(cycleNum),y=damping))
 
 ggplot(helmet) + geom_boxplot(aes(x=as.factor(sampleNum),y=stiffness))
-ggplot(helmet) + geom_boxplot(aes(x=as.factor(sampleNum),y=damping))
+#ggplot(helmet) + geom_boxplot(aes(x=as.factor(sampleNum),y=damping))
 
 ```
+
+# Same but with stiffness fraction
+```{r}
+ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffFrac))
+ggplot(helmet) + geom_boxplot(aes(x=chemIndex,y=stiffFrac))
+```
+
+```{r}
+ggplot(helmet,aes(x=cycleNum,y=stiffFrac,color=as.factor(sampleNum)))+geom_line()+geom_point()
+
+ggplot(c79,aes(x=cycleNum,y=stiffFrac,color=as.factor(sampleNum)))+geom_line()+geom_point()
+ggplot(c100,aes(x=cycleNum,y=stiffFrac,color=as.factor(sampleNum)))+geom_line()+geom_point()
+ggplot(c121,aes(x=cycleNum,y=stiffFrac,color=as.factor(sampleNum)))+geom_line()+geom_point()
+```
+
+## How do porosity and chemical index interact?
+Are higher stiffness values better? For stiffFrac, I'd expect better compounds would stabilize out at 1 (showing little relative change over additional cycles), but what about general stiffness?
+
+```{r}
+ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffFrac,fill=chemIndex))
+ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffness,fill=chemIndex))
+
+```
+## Is there a role the amplitude and freqency play? 
+```{r}
+helmet |> group_by(sampleNum)|>
+ggplot(aes(x=cycleNum,y=stiffFrac,color=as.factor(round(freq,1)))) + geom_line() +geom_point()
+
+helmet |> group_by(sampleNum)|>
+ggplot(aes(x=cycleNum,y=stiffFrac,color=as.factor(round(amp,2)))) + geom_point()
+
+helmet |> group_by(sampleNum)|>
+ggplot(aes(x=cycleNum,y=stiffFrac,color=as.factor(round(strainRate,1)))) +geom_point()
+```
+
+## I'm curious how the data would look if I shifted everything to be centered around 0, or more so the abs(stiffFrac-1)
+```{r}
+helmet |>
+  mutate(stiffFrac = abs(stiffFrac - 1)) |>
+  filter(stiffFrac > 0.1) |>
+  ggplot(aes(x=cycleNum,y=stiffFrac,color=as.factor(sampleNum))) + geom_line() +geom_point()
+```
+
+```{r}
+helmet |>
+  filter(sampleNum %in% c(129,138,145,150,166,167,168)) |>
+  
+```
+
+## Scatterplot matrices for stiffness
+```{r}
+ggpairs(helmet)
+```
+
 
 ## stressKpa and strain
 ```{r}
 ggplot(helmet)+geom_point(aes(x=stresskpa,y=stiffness,color=(as.factor(sampleNum))))
-ggplot(helmet)+geom_point(aes(x=stresskpa,y=damping,color=(as.factor(sampleNum))))
+#ggplot(helmet)+geom_point(aes(x=stresskpa,y=damping,color=(as.factor(sampleNum))))
 
 ggplot(helmet)+geom_point(aes(x=strain,y=stiffness,color=(as.factor(sampleNum))))
-ggplot(helmet)+geom_point(aes(x=strain,y=damping,color=(as.factor(sampleNum))))
+#ggplot(helmet)+geom_point(aes(x=strain,y=damping,color=(as.factor(sampleNum))))
 
 ```
 
