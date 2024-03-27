@@ -131,7 +131,30 @@ helmet |>
 
 ## Scatterplot matrices for stiffness
 ```{r}
-ggpairs(helmet)
+ggpairs(helmet[4:10])
+```
+
+```{r}
+ggplot(helmet) + geom_point(aes(x=freq,y=stiffFrac))
+ggplot(helmet) + geom_point(aes(x=amp,y=stiffFrac,color=as.factor(sampleNum)))
+ggplot(helmet) + geom_point(aes(x=stresskpa,y=stiffFrac))
+
+ggplot(helmet) + geom_point(aes(x=strain,y=stiffness))
+ggplot(helmet) + geom_point(aes(x=stresskpa,y=stiffness))
+
+
+```
+## maybe look at average stiffness in a cycle or average stiffness fraction for each sample?
+```{r}
+helmet |>
+  group_by(sampleNum) |>
+  summarize(stiffmean = mean(stiffFrac)) |>
+  ggplot() + geom_point(aes(x=sampleNum,y=stiffmean))
+
+helmet |>
+  group_by(cycleNum) |>
+  summarize(stiffmean = mean(stiffFrac)) |>
+  ggplot() + geom_point(aes(x=cycleNum,y=stiffmean))
 ```
 
 
