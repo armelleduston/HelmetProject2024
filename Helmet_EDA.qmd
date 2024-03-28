@@ -99,8 +99,8 @@ ggplot(c121,aes(x=cycleNum,y=stiffFrac,color=as.factor(sampleNum)))+geom_line()+
 Are higher stiffness values better? For stiffFrac, I'd expect better compounds would stabilize out at 1 (showing little relative change over additional cycles), but what about general stiffness?
 
 ```{r}
-ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffFrac,fill=chemIndex))
-ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffness,fill=chemIndex))
+ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffFrac,fill=chemIndex)) + labs(y="Stiffness Fraction",x="Porosity", fill="Chemical Index")
+ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffness,fill=chemIndex)) +labs(y="Stiffness",x="Porosity", fill="Chemical Index")
 
 ```
 ## Is there a role the amplitude and freqency play? 
