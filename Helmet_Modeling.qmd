@@ -1,0 +1,9 @@
+---
+title: "Helmet Modeling"
+author: "Emily Younger"
+format: html
+editor: visual
+---
+
+## can do stepwise selection with lmer using library(lmerTest) and step() function
+
