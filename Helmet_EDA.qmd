@@ -1,7 +1,7 @@
 ---
 title: "Helmet EDA"
 format: html
-editor: visual
+editor: source
 ---
 
 ## Libraries
@@ -11,6 +11,7 @@ library(ggplot2)
 library(tidyr)
 library(GGally)
 library(gplots)
+library(gridExtra)
 
 ```
 
@@ -18,7 +19,7 @@ library(gplots)
 
 ```{r}
 data <- read.csv("clean_helmet.csv")
-data <- subset(data, select = -c(chemistry))
+#data <- subset(data, select = -c(chemistry))
 
 data$chemIndex <- as.character(data$chemIndex)
 data$porosity <- as.character(data$porosity)
@@ -204,6 +205,63 @@ balloonplot(t(dt2), main ="Contingency Table  Balloon Plot", xlab ="chemIndex", 
             label = FALSE, show.margins = FALSE)
 
 ```
+
+## Plot data over time divided by porosity and chemical index
+```{r}
+
+
+plot1 <- data |>
+  subset(porosity == '71' & chemIndex == '79') |>
+  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  geom_point() +
+  geom_smooth(se = FALSE) + 
+  ggtitle("Porosity 71, Chem 79") + 
+  theme(legend.position = "none")
+
+plot2 <- data |>
+  subset(porosity == '81' & chemIndex == '79') |>
+  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  geom_point() +
+  geom_smooth(se = FALSE)  + 
+  ggtitle("Porosity 81, Chem 79") + 
+  theme(legend.position = "none")
+
+plot3 <- data |>
+  subset(porosity == '71' & chemIndex == '100') |>
+  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  geom_point() +
+  geom_smooth(se = FALSE)  + 
+  ggtitle("Porosity 71, Chem 100") +
+  theme(legend.position = "none")
+
+plot4 <- data |>
+  subset(porosity == '81' & chemIndex == '100') |>
+  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  geom_point() +
+  geom_smooth(se = FALSE)  + 
+  ggtitle("Porosity 81, Chem 100") +
+  theme(legend.position = "none")
+
+plot5 <- data |>
+  subset(porosity == '71' & chemIndex == '121') |>
+  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  geom_point() +
+  geom_smooth(se = FALSE)  + 
+  ggtitle("Porosity 71, Chem 121") +
+  theme(legend.position = "none")
+
+plot6 <- data |>
+  subset(porosity == '81' & chemIndex == '121') |>
+  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  geom_point() +
+  geom_smooth(se = FALSE)  + 
+  ggtitle("Porosity 81, Chem 121") +
+  theme(legend.position = "none")
+
+grid.arrange(plot1, plot3, plot5, plot2, plot4, plot6, nrow = 2, ncol = 3)
+
+```
+
 
 # Analysis ideas
 
