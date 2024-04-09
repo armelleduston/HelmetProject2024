@@ -113,3 +113,12 @@ anova(mod1,finalwpor)
 #the finalwpor model does a bit better than the original model and about the same as the final model
 ```
 
+## step selection with finalwpor to see if I get something similar to final
+something to note is that apparently stepwise selection might not be the most reliable thing to use for mixed models due to it's use of REML to fit parameters whereas usual stepwise selection doesn't. Best to double check how the models compare and stuff
+```{r}
+res2 <- step(finalwpor)
+res2
+
+#It did get the same model
+```
+
