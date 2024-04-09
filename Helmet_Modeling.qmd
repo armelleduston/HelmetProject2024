@@ -5,5 +5,111 @@ format: html
 editor: visual
 ---
 
+## Setup
+
+```{r}
+library(dplyr)
+library(lme4)
+library(lmerTest)
+
+#load data
+helmet <- read.csv("clean_helmet.csv")
+helmet$chemIndex <- as.factor(helmet$chemIndex)
+helmet$porosity <- as.factor(helmet$porosity)
+```
+
+## Model from class
+```{r}
+mod1 <- lmer(stiffFrac ~ stresskpa + strainRate + chemIndex*porosity + cycleNum:chemIndex + cycleNum:porosity + cycleNum + (cycleNum|sampleNum),data=helmet)
+summary(mod1)
+
+plot(mod1,xlab = "Fitted Values", ylab = "Residuals")
+qqnorm(residuals(mod1, type = "pearson"))
+qqline(residuals(mod1, type = "pearson"))
+randoms <- ranef(mod1)$sampleNum$'(Intercept)'
+qqnorm(randoms)
+qqline(randoms)
+randoms2 <- ranef(mod1)$sampleNum$'cycleNum'
+qqnorm(randoms2)
+qqline(randoms2)
+```
+
 ## can do stepwise selection with lmer using library(lmerTest) and step() function
+```{r}
+res <- step(mod1,reduce.random=FALSE)
+res
+```
+
+## Model from step function
+```{r}
+final <- get_model(res)
+summary(final)
+plot(final,xlab = "Fitted Values", ylab = "Residuals")
+qqnorm(residuals(final, type = "pearson"))
+qqline(residuals(final, type = "pearson"))
+randoms <- ranef(final)$sampleNum$'(Intercept)'
+qqnorm(randoms)
+qqline(randoms)
+randoms2 <- ranef(final)$sampleNum$'cycleNum'
+qqnorm(randoms2)
+qqline(randoms2)
+```
+
+#Test against the original/full model
+```{r}
+anova(mod1,final)
+```
+
+
+## But porosity does seem to be pretty important to the question, so let me look at adding that, but with different interactions. 
+```{r}
+# porosity*chemIndex
+pc <- lmer(stiffFrac ~ stresskpa + strainRate + chemIndex*porosity + cycleNum:chemIndex + cycleNum + (cycleNum|sampleNum),data=helmet)
+summary(mod1)
+
+#compare against full model:
+anova(mod1,pc)
+#not very different/much better it seems
+
+#Check conditions
+# plot(pc,xlab = "Fitted Values", ylab = "Residuals")
+# qqnorm(residuals(pc, type = "pearson"))
+# qqline(residuals(pc, type = "pearson"))
+# randoms <- ranef(pc)$sampleNum$'(Intercept)'
+# qqnorm(randoms)
+# qqline(randoms)
+# randoms2 <- ranef(pc)$sampleNum$'cycleNum'
+# qqnorm(randoms2)
+# qqline(randoms2)
+
+#porosity no interactions
+p <- lmer(stiffFrac ~ stresskpa + strainRate + chemIndex + porosity + cycleNum:chemIndex + cycleNum + (cycleNum|sampleNum),data=helmet)
+summary(p)
+
+#compare against full model
+anova(mod1,p)
+#again the models aren't too different
+
+# plot(p,xlab = "Fitted Values", ylab = "Residuals")
+# qqnorm(residuals(p, type = "pearson"))
+# qqline(residuals(p, type = "pearson"))
+# randoms <- ranef(p)$sampleNum$'(Intercept)'
+# qqnorm(randoms)
+# qqline(randoms)
+# randoms2 <- ranef(p)$sampleNum$'cycleNum'
+# qqnorm(randoms2)
+# qqline(randoms2)
+```
+
+## Try final model but add in porosity with no interactions? Porosity was the last term to be removed and it does feel important
+```{r}
+finalwpor <- lmer(stiffFrac ~ strainRate + porosity + chemIndex*cycleNum + (cycleNum | sampleNum),data=helmet)
+summary(finalwpor)
+
+#compare with final and full
+anova(finalwpor,final)
+anova(mod1,finalwpor)
+
+#the finalwpor model does a bit better than the original model and about the same as the final model
+```
 
