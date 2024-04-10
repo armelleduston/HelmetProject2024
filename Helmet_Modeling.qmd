@@ -20,7 +20,7 @@ helmet$porosity <- as.factor(helmet$porosity)
 
 ## Model from class
 ```{r}
-mod1 <- lmer(stiffFrac ~ stresskpa + strainRate + chemIndex*porosity + cycleNum:chemIndex + cycleNum:porosity + cycleNum + (cycleNum|sampleNum),data=helmet)
+mod1 <- lmer(stiffFrac ~ stresskpa + strainRate + chemIndex*porosity + cycleNum:chemIndex + cycleNum:porosity + cycleNum + strain + (cycleNum|sampleNum),data=helmet)
 summary(mod1)
 
 plot(mod1,xlab = "Fitted Values", ylab = "Residuals")
