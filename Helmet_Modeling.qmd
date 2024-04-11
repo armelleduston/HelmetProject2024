@@ -134,3 +134,18 @@ res2
 
 #It did get the same model
 ```
+
+## Updates to final model
+```{r}
+#filter out cycle number 0:
+helmet <- helmet |>
+  subset(cycleNum != 0)
+update <- lmer(stiffFrac~chemIndex*log(cycleNum)+freq + amp + (log(cycleNum)|sampleNum),data = helmet)
+summary(update)
+plot(update)
+```
+
+
+
+
+
