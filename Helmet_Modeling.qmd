@@ -24,9 +24,9 @@ helmet$porosity <- as.factor(helmet$porosity)
 mod1 <- lmer(stiffFrac ~ stresskpa + strainRate + chemIndex*porosity + cycleNum:chemIndex + cycleNum:porosity + cycleNum + (chemIndex + porosity + cycleNum|sampleNum),data=helmet)
 summary(mod1)
 
-model1 <- lmer(stiffFrac ~ chemIndex*porosity + stresskpa + strainRate + 
-              (1 +chemIndex + porosity|cycleNum), data = data)
-summary(model1)
+#model1 <- lmer(stiffFrac ~ chemIndex*porosity + stresskpa + strainRate + 
+              #(1 +chemIndex + porosity|cycleNum), data = data)
+#summary(model1)
 
 plot(mod1,xlab = "Fitted Values", ylab = "Residuals")
 qqnorm(residuals(mod1, type = "pearson"))
@@ -51,7 +51,7 @@ res
 ```{r}
 final <- get_model(res)
 summary(final)
-final <- lme4::lmer(stiffFrac~strainRate+chemIndex*cycleNum+(porosity+cycleNum|sampleNum),data = helmet)
+final <- lme4::lmer(stiffFrac~strainRate+chemIndex*cycleNum+(cycleNum|sampleNum),data = helmet)
 summary(final)
 plot(final,xlab = "Fitted Values", ylab = "Residuals")
 qqnorm(residuals(final, type = "pearson"))
