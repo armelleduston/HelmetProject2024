@@ -8,6 +8,7 @@ Libraries
 library(lme4)
 library(effectsize)
 library(MuMIn)
+library(glmnet)
 
 ```
 
@@ -27,44 +28,51 @@ data <- na.omit(data)
 data_stiffness <- subset(data, select = -c(damping, nonlinear))
 data_damping <- subset(data, select = -c(stiffness, nonlinear))
 data_nonlinear <- subset(data, select = -c(damping, stiffness))
+
 ```
 
 
 Modeling
 ```{r}
-model1 <- lmer(stiffFrac ~ chemIndex*porosity + stresskpa + strainRate + 
-              (1 +chemIndex + porosity|cycleNum), data = data)
+# model1 <- lmer(stiffFrac ~ chemIndex*porosity + stresskpa + strainRate + 
+#               (1 +chemIndex + porosity|cycleNum), data = data)
+# 
+# model2 <- lmer(stiffFrac ~ chemIndex*porosity + stresskpa + strainRate + 
+#               (1|cycleNum), data = data)
+# summary(model2)
+# Anova(model2)
+# 
+# lrt = -2 * logLik(model1) + 2 * logLik(model2)
+# pchisq(as.numeric(lrt), df=2, lower.tail=F)
+# 
+# model3 <- lm(stiffFrac ~ chemIndex*porosity + stresskpa + strainRate, data = data)
+# 
+# lrt = -2 * logLik(model2) + 2 * logLik(model3)
+# pchisq(as.numeric(lrt), df=1, lower.tail=F)
+# 
+# model4 <- lmer(stiffFrac ~ chemIndex*porosity + strainRate + 
+#               (1|cycleNum), data = data)
+# summary(model4)
+# Anova(model4)
 
-model2 <- lmer(stiffFrac ~ chemIndex*porosity + stresskpa + strainRate + 
-              (1|cycleNum), data = data)
-summary(model2)
-Anova(model2)
+datano0 <- data |>
+  subset(cycleNum != 0)
 
-lrt = -2 * logLik(model1) + 2 * logLik(model2)
-pchisq(as.numeric(lrt), df=2, lower.tail=F)
+model1 <- lmer(sqrt(stiffFrac) ~ chemIndex + freq + amp + 
+                 (1 + log(cycleNum)|sampleNum), data = datano0)
+summary(model1)
+plot(model1)
+res_mm <- residuals(model1)
+qqnorm(res_mm)
+qqline(res_mm, col='red')
 
-model3 <- lm(stiffFrac ~ chemIndex*porosity + stresskpa + strainRate, data = data)
+qqnorm(unlist(ranef(model1)))
+qqline(res_mm, col='red')
 
-lrt = -2 * logLik(model2) + 2 * logLik(model3)
-pchisq(as.numeric(lrt), df=1, lower.tail=F)
-
-model4 <- lmer(stiffFrac ~ chemIndex*porosity + strainRate + 
-              (1|cycleNum), data = data)
-summary(model4)
-Anova(model4)
 
 ```
 Check conditions
 ```{r}
-effectsize(model2)
-
-plot(model2)
-res_mm <- residuals(model2)
-qqnorm(res_mm)
-qqline(res_mm, col='red')
-
-qqnorm(unlist(ranef(model2)))
-qqline(res_mm, col='red')
 
 effectsize(model3)
 
@@ -75,6 +83,45 @@ qqline(res_mm, col='red')
 
 qqnorm(unlist(ranef(model4)))
 qqline(res_mm, col='red')
+
+```
+
+Keep experimenting
+```{r}
+
+model5 <- lmer(stiffFrac ~ chemIndex*porosity + strainRate + 
+              (1 + cycleNum|sampleNum), data = data)
+
+summary(model5)
+Anova(model5)
+
+plot(model5)
+res_mm <- residuals(model5)
+qqnorm(res_mm)
+qqline(res_mm, col='red')
+
+qqnorm(unlist(ranef(model5)))
+qqline(res_mm, col='red')
+
+
+```
+
+Non-mixed model
+```{r}
+
+data10000 <- data |> subset(cycleNum == 10000)
+
+
+model6 <- lm(sqrt(stiffFrac) ~ chemIndex*porosity + stresskpa + strainRate, 
+             data = data10000)
+summary(model6)
+plot(model6)
+
+
+model7 <- lm(sqrt(stiffFrac) ~ chemIndex + porosity + stresskpa + strainRate, 
+             data = data10000)
+summary(model7)
+plot(model7)
 
 ```
 
