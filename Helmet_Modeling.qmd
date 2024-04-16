@@ -171,7 +171,7 @@ plot(dampModel)
 ```
 
 #Theoretical Model:
-
+$DampingFraction=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3strainRate+\alpha_4I(porosity=81)+(\beta_0+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
 
 
 Is strain rate significant?
