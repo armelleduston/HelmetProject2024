@@ -51,6 +51,15 @@ stiffnessDf2[9:22] <- stiffF
 
 
 dampingDf <- subset(extract_name_df, select = c(1:8,37:50))
+
+cycle1_damping <- dampingDf$delta_rad_Cyc_A
+
+dampF <- tan(dampingDf[9:22])/tan(cycle1_damping)
+
+dampingDf2 <- dampingDf
+dampingDf2[9:22] <- dampF
+
+
 nonlinearDf <- subset(extract_name_df, select = c(1:8,51:64))
 
 
@@ -80,12 +89,24 @@ long_stiffness <- long_stiffness |>
   join(stiffFraction,by=names(long_stiffness[1:9]))
 
 # damping
+dampFraction <- dampingDf2 |>
+  pivot_longer(cols=names(dampingDf[9:22]),
+               names_to = "cycleLet",
+               values_to = "dampFrac")
+
+dampFraction$cycleLet <- apply(cbind(dampFraction$cycleLet), 1, 
+                                 function(x) substr(x, str_length(x), str_length(x)))  
+
+
 long_damping <- dampingDf |>
   pivot_longer(cols = names(dampingDf[9:22]),
                names_to = "cycleLet",
                values_to = "damping") 
 long_damping$cycleLet <- apply(cbind(long_damping$cycleLet), 1, 
                                  function(x) substr(x, str_length(x), str_length(x)))
+
+long_damping <- long_damping |>
+  join(dampFraction,by=names(long_damping[1:9]))
 
 # nonlinear
 long_nonlinear <- nonlinearDf |>
