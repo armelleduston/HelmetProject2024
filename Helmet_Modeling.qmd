@@ -16,6 +16,7 @@ library(lmerTest)
 helmet <- read.csv("clean_helmet.csv")
 helmet$chemIndex <- as.factor(helmet$chemIndex)
 helmet$porosity <- as.factor(helmet$porosity)
+
 ```
 
 ## Model from class
@@ -145,7 +146,39 @@ summary(update)
 plot(update)
 ```
 
+#Theoretical Model:
+$stiffnessFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+(\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
 
 
+
+
+## Damping Model
+
+```{r}
+full <- lmer(dampFrac ~ chemIndex + porosity + freq + amp + strainRate + strain + stresskpa + log(cycleNum) + (log(cycleNum)| sampleNum),data=helmet)
+summary(full)
+```
+
+```{r}
+dres <- step(full)
+dres
+```
+
+```{r}
+dampModel <- lmer(dampFrac ~ porosity + freq + amp +strainRate + log(cycleNum) + (log(cycleNum)|sampleNum),data=helmet)
+summary(dampModel)
+plot(dampModel)
+```
+
+#Theoretical Model:
+
+
+
+Is strain rate significant?
+```{r}
+dampModelsr <- lmer(dampFrac ~ porosity + freq + amp + strainRate + log(cycleNum) + (log(cycleNum)|sampleNum),data=helmet)
+
+anova(dampModelsr,dampModel)
+```
 
 

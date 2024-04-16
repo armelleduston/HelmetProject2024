@@ -173,3 +173,13 @@ ggplot(helmet)+geom_point(aes(x=strain,y=stiffness,color=(as.factor(sampleNum)))
 ggplot(helmet) + geom_count(aes(x=chemIndex,y=porosity))
 ```
 
+## Damping Fraction EDA
+```{r}
+ggpairs(helmet[,c(4:7,13,15)])
+```
+
+
+
+
+
+
