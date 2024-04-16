@@ -51,6 +51,9 @@ stiffnessDf2[9:22] <- stiffF
 
 
 dampingDf <- subset(extract_name_df, select = c(1:8,37:50))
+dcycle1 <- tan(dampingDf$delta_rad_Cyc_A)
+dampF <- dampingDf[9:22]
+
 nonlinearDf <- subset(extract_name_df, select = c(1:8,51:64))
 
 
