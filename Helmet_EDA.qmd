@@ -208,51 +208,52 @@ balloonplot(t(dt2), main ="Contingency Table  Balloon Plot", xlab ="chemIndex", 
 
 ## Plot data over time divided by porosity and chemical index
 ```{r}
+datano0 <- data |>
+  subset(cycleNum != 0)
 
-
-plot1 <- data |>
+plot1 <- datano0 |>
   subset(porosity == '71' & chemIndex == '79') |>
-  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  ggplot(aes(x=log(cycleNum), y = stiffFrac, col = sampleNum)) +
   geom_point() +
   geom_smooth(se = FALSE) + 
   ggtitle("Porosity 71, Chem 79") + 
   theme(legend.position = "none")
 
-plot2 <- data |>
+plot2 <- datano0 |>
   subset(porosity == '81' & chemIndex == '79') |>
-  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  ggplot(aes(x=log(cycleNum), y = stiffFrac, col = sampleNum)) +
   geom_point() +
   geom_smooth(se = FALSE)  + 
   ggtitle("Porosity 81, Chem 79") + 
   theme(legend.position = "none")
 
-plot3 <- data |>
+plot3 <- datano0 |>
   subset(porosity == '71' & chemIndex == '100') |>
-  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  ggplot(aes(x=log(cycleNum), y = stiffFrac, col = sampleNum)) +
   geom_point() +
   geom_smooth(se = FALSE)  + 
   ggtitle("Porosity 71, Chem 100") +
   theme(legend.position = "none")
 
-plot4 <- data |>
+plot4 <- datano0 |>
   subset(porosity == '81' & chemIndex == '100') |>
-  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  ggplot(aes(x=log(cycleNum), y = stiffFrac, col = sampleNum)) +
   geom_point() +
   geom_smooth(se = FALSE)  + 
   ggtitle("Porosity 81, Chem 100") +
   theme(legend.position = "none")
 
-plot5 <- data |>
+plot5 <- datano0 |>
   subset(porosity == '71' & chemIndex == '121') |>
-  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  ggplot(aes(x=log(cycleNum), y = stiffFrac, col = sampleNum)) +
   geom_point() +
   geom_smooth(se = FALSE)  + 
   ggtitle("Porosity 71, Chem 121") +
   theme(legend.position = "none")
 
-plot6 <- data |>
+plot6 <- datano0 |>
   subset(porosity == '81' & chemIndex == '121') |>
-  ggplot(aes(x=cycleNum, y = stiffFrac, col = sampleNum)) +
+  ggplot(aes(x=log(cycleNum), y = stiffFrac, col = sampleNum)) +
   geom_point() +
   geom_smooth(se = FALSE)  + 
   ggtitle("Porosity 81, Chem 121") +
