@@ -41,11 +41,11 @@ data <- na.omit(data)
 
 datano0 <- data |>
   subset(cycleNum != 0)
-model01 <- lmer(sqrt(stiffFrac) ~ amp + freq + log(cycleNum) + chemIndex +
+model01 <- lmer(stiffFrac ~ amp + freq + log(cycleNum) + chemIndex +
                  (1|sampleNum), data = datano0)
 
-model1 <- lmer(sqrt(stiffFrac) ~ amp + freq + log(cycleNum) + chemIndex +
-                 (1 + log(cycleNum)|sampleNum), data = datano0)
+model1 <- lmer(stiffFrac ~ chemIndex*log(cycleNum) + freq + amp + 
+                 (log(cycleNum)|sampleNum), data = datano0)
 
 summary(model1)
 Anova(model1)
