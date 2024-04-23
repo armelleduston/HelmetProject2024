@@ -137,6 +137,7 @@ res2
 ```
 
 ## Updates to final model
+
 ```{r}
 #filter out cycle number 0:
 helmet <- helmet |>
@@ -146,11 +147,7 @@ summary(update)
 plot(update)
 ```
 
-#Theoretical Model:
-$stiffnessFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+(\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
-
-
-
+#Theoretical Model: $stiffnessFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+(\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
 
 ## Damping Model
 
@@ -170,15 +167,12 @@ summary(dampModel)
 plot(dampModel)
 ```
 
-#Theoretical Model:
-$DampingFraction=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3strainRate+\alpha_4I(porosity=81)+(\beta_0+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
-
+#Theoretical Model: $DampingFraction=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3strainRate+\alpha_4I(porosity=81)+(\beta_0+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
 
 Is strain rate significant?
+
 ```{r}
 dampModelsr <- lmer(dampFrac ~ porosity + freq + amp + strainRate + log(cycleNum) + (log(cycleNum)|sampleNum),data=helmet)
 
 anova(dampModelsr,dampModel)
 ```
-
-

@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-## Load in libraries and clean_helmet, modify data  
+## Load in libraries and clean_helmet, modify data
 
 ```{r}
 library(dplyr)
@@ -12,10 +12,12 @@ library(ggplot2)
 library(GGally)
 
 helmet <- read.csv("clean_helmet.csv") |> mutate_at(c('porosity','chemIndex'), as.factor) |>
-  filter(cycleNum <= 10000)
+  filter(cycleNum <= 10000)|>
+  filter(cycleNum != 0)
 ```
 
 ## What does porosity do? Do more dense materials appear to last longer? Is there no effect?
+
 ```{r}
 ggplot(helmet) + geom_point(aes(x=cycleNum,y=stiffness,color=porosity))
 ggplot(helmet) + geom_point(aes(x=cycleNum,y=damping,color=porosity))
@@ -32,6 +34,7 @@ ggplot(p81,aes(x=cycleNum,y=damping,color=as.factor(sampleNum)))+geom_line()+geo
 ```
 
 ## What about the same thing but for chemical index?
+
 ```{r}
 ggplot(helmet) + geom_point(aes(x=cycleNum,y=stiffness,color=chemIndex))
 ggplot(helmet) + geom_point(aes(x=cycleNum,y=damping,color=chemIndex))
@@ -52,6 +55,7 @@ ggplot(c121,aes(x=cycleNum,y=damping,color=as.factor(sampleNum)))+geom_line()+ge
 ```
 
 ## Strain Rate vs freq and amplitude? amp and strain with damping
+
 ```{r}
 ggplot(helmet, aes(x=strainRate,y=stiffness)) + geom_point()
 #ggplot(helmet, aes(x=strainRate,y=damping)) + geom_point() + labs(title="Damping vs Strain Rate",x="Strain Rate",y="Damping")
@@ -66,6 +70,7 @@ ggplot(helmet, aes(x=amp,y=stiffness)) + geom_point()
 ```
 
 ## boxplot time
+
 ```{r}
 ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffness))
 #ggplot(helmet) + geom_boxplot(aes(x=porosity,y=damping))
@@ -82,6 +87,7 @@ ggplot(helmet) + geom_boxplot(aes(x=as.factor(sampleNum),y=stiffness))
 ```
 
 # Same but with stiffness fraction
+
 ```{r}
 ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffFrac))
 ggplot(helmet) + geom_boxplot(aes(x=chemIndex,y=stiffFrac))
@@ -96,14 +102,26 @@ ggplot(c121,aes(x=cycleNum,y=stiffFrac,color=as.factor(sampleNum)))+geom_line()+
 ```
 
 ## How do porosity and chemical index interact?
+
 Are higher stiffness values better? For stiffFrac, I'd expect better compounds would stabilize out at 1 (showing little relative change over additional cycles), but what about general stiffness?
 
 ```{r}
 ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffFrac,fill=chemIndex)) + labs(y="Stiffness Fraction",x="Porosity", fill="Chemical Index")
 ggplot(helmet) + geom_boxplot(aes(x=porosity,y=stiffness,fill=chemIndex)) +labs(y="Stiffness",x="Porosity", fill="Chemical Index")
 
+
 ```
-## Is there a role the amplitude and freqency play? 
+
+## Damping Fraction Boxplots
+```{r}
+ggplot(helmet) + geom_boxplot(aes(x=porosity,y=dampFrac,fill=chemIndex)) + labs(y="Damping Fraction",x="Porosity", fill="Chemical Index")
+```
+
+
+
+
+## Is there a role the amplitude and freqency play?
+
 ```{r}
 helmet |> group_by(sampleNum)|>
 ggplot(aes(x=cycleNum,y=stiffFrac,color=as.factor(round(freq,1)))) + geom_line() +geom_point()
@@ -116,6 +134,7 @@ ggplot(aes(x=cycleNum,y=stiffFrac,color=as.factor(round(strainRate,1)))) +geom_p
 ```
 
 ## I'm curious how the data would look if I shifted everything to be centered around 0, or more so the abs(stiffFrac-1)
+
 ```{r}
 helmet |>
   mutate(stiffFrac = abs(stiffFrac - 1)) |>
@@ -130,6 +149,7 @@ helmet |>
 ```
 
 ## Scatterplot matrices for stiffness
+
 ```{r}
 ggpairs(helmet[4:10])
 ```
@@ -144,7 +164,9 @@ ggplot(helmet) + geom_point(aes(x=stresskpa,y=stiffness)) + labs(title="Stiffnes
 
 
 ```
+
 ## maybe look at average stiffness in a cycle or average stiffness fraction for each sample?
+
 ```{r}
 helmet |>
   group_by(sampleNum) |>
@@ -157,8 +179,8 @@ helmet |>
   ggplot() + geom_point(aes(x=cycleNum,y=stiffmean))
 ```
 
-
 ## stressKpa and strain
+
 ```{r}
 ggplot(helmet)+geom_point(aes(x=stresskpa,y=stiffness,color=(as.factor(sampleNum))))
 #ggplot(helmet)+geom_point(aes(x=stresskpa,y=damping,color=(as.factor(sampleNum))))
@@ -169,17 +191,13 @@ ggplot(helmet)+geom_point(aes(x=strain,y=stiffness,color=(as.factor(sampleNum)))
 ```
 
 ## Counts
+
 ```{r}
 ggplot(helmet) + geom_count(aes(x=chemIndex,y=porosity))
 ```
 
 ## Damping Fraction EDA
+
 ```{r}
 ggpairs(helmet[,c(4:7,13,15)])
 ```
-
-
-
-
-
-

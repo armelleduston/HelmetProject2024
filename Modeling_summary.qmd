@@ -18,7 +18,6 @@ helmet <- helmet |>
   subset(cycleNum != 0)
 ```
 
-
 # Stiffness Modeling
 
 ## Theoretical Model:
@@ -26,11 +25,19 @@ helmet <- helmet |>
 $stiffnessFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+(\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
 
 ## Code:
+
 ```{r}
+stiffModelp <- lmer(stiffFrac~chemIndex*log(cycleNum)+freq + amp + porosity + 
+                     (log(cycleNum)|sampleNum),data = helmet)
+summary(stiffModelp)
+plot(stiffModelp)
+
 stiffModel <- lmer(stiffFrac~chemIndex*log(cycleNum)+freq + amp + 
                      (log(cycleNum)|sampleNum),data = helmet)
 summary(stiffModel)
 plot(stiffModel)
+
+anova(stiffModelp,stiffModel)
 ```
 
 # Damping Modeling
@@ -40,10 +47,17 @@ plot(stiffModel)
 $DampingFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3strainRate+\alpha_4I(porosity=81)+(\beta_0+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
 
 ## Code:
+
 ```{r}
+dampModelci <- lmer(dampFrac ~ porosity + freq + amp +strainRate + chemIndex +
+                    log(cycleNum)+(log(cycleNum)|sampleNum),data=helmet)
+summary(dampModelci)
+plot(dampModelci)
+
 dampModel <- lmer(dampFrac ~ porosity + freq + amp +strainRate +
                     log(cycleNum)+(log(cycleNum)|sampleNum),data=helmet)
 summary(dampModel)
 plot(dampModel)
-```
 
+anova(dampModelci,dampModel)
+```
