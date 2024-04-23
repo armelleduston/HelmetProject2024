@@ -41,10 +41,11 @@ data <- na.omit(data)
 
 datano0 <- data |>
   subset(cycleNum != 0)
-model01 <- lmer(stiffFrac ~ amp + freq + log(cycleNum) + chemIndex +
+
+model01 <- lmer(stiffFrac ~ amp + freq + log(cycleNum) + chemIndex + porosity + 
                  (1|sampleNum), data = datano0)
 
-model1 <- lmer(stiffFrac ~ chemIndex*log(cycleNum) + freq + amp + 
+model1 <- lmer(stiffFrac ~ chemIndex*log(cycleNum) + freq + amp+ porosity +  
                  (log(cycleNum)|sampleNum), data = datano0)
 
 summary(model1)
@@ -69,10 +70,10 @@ r.squaredGLMM(model1)
 
 # Modeling dampFrac
 ```{r}
-model02 <- lmer(dampFrac ~ porosity + freq + amp + strainRate + log(cycleNum) + 
+model02 <- lmer(dampFrac ~ porosity + chemIndex + freq + amp + log(cycleNum) + 
                  (1|sampleNum), data = datano0)
 
-model2 <- lmer(dampFrac ~ porosity + freq + amp + strainRate + log(cycleNum) + 
+model2 <- lmer(dampFrac ~ porosity + chemIndex + freq + amp  + log(cycleNum) + 
                  (1 + log(cycleNum)|sampleNum), data = datano0)
 summary(model2)
 Anova(model2)
@@ -86,7 +87,7 @@ qqline(res_mm, col='red')
 qqnorm(unlist(ranef(model2)))
 qqline(res_mm, col='red')
 
-anova(model20, model2)
+anova(model02, model2)
 r.squaredGLMM(model2)
 
 ```
