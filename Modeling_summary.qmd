@@ -10,7 +10,7 @@ library(lme4)
 library(lmerTest)
 
 #load data
-helmet <- read.csv("clean_helmet.csv")
+helmet <- read.csv("clean_helmet_for_emily.csv")
 helmet$chemIndex <- as.factor(helmet$chemIndex)
 helmet$porosity <- as.factor(helmet$porosity)
 #filter out cycle number 0:
@@ -31,6 +31,13 @@ stiffModelp <- lmer(stiffFrac~chemIndex*log(cycleNum)+freq + amp + porosity +
                      (log(cycleNum)|sampleNum),data = helmet)
 summary(stiffModelp)
 plot(stiffModelp)
+
+stiffModelp2 <- lmer(stiffFrac~chemIndex + log(cycleNum)+freq + amp + porosity + 
+                     (log(cycleNum)|sampleNum),data = helmet)
+summary(stiffModelp2)
+plot(stiffModelp2)
+
+anova(stiffModelp,stiffModelp2)
 
 stiffModel <- lmer(stiffFrac~chemIndex*log(cycleNum)+freq + amp + 
                      (log(cycleNum)|sampleNum),data = helmet)
@@ -69,5 +76,5 @@ dampModel <- lmer(dampFrac ~ porosity + freq + amp +strainRate +
 summary(dampModel)
 plot(dampModel)
 
-anova(dampModelci,dampModel)
+anova(dampModel,dampModelci)
 ```
