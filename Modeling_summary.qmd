@@ -44,7 +44,7 @@ anova(stiffModelp,stiffModel)
 
 ## Theoretical Model:
 
-$DampingFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3strainRate+\alpha_4I(porosity=81)+(\beta_0+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
+$DampingFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3strainRate+\alpha_4I(porosity=81)+\alpha_5I(chemIndex=100)+\alpha_6I(chemIndex=121)+(\beta_0+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
 
 ## Code:
 
