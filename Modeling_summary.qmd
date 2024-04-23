@@ -22,7 +22,7 @@ helmet <- helmet |>
 
 ## Theoretical Model:
 
-$stiffnessFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+(\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
+$stiffnessFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+\alpha_5I(porosity=81)+(\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
 
 ## Code:
 
@@ -38,6 +38,16 @@ summary(stiffModel)
 plot(stiffModel)
 
 anova(stiffModelp,stiffModel)
+
+plot(stiffModelp,xlab = "Fitted Values", ylab = "Residuals")
+qqnorm(residuals(stiffModelp, type = "pearson"))
+qqline(residuals(stiffModelp, type = "pearson"))
+randoms <- ranef(stiffModelp)$sampleNum$'(Intercept)'
+qqnorm(randoms)
+qqline(randoms)
+randoms2 <- ranef(stiffModelp)$sampleNum$'log(cycleNum)'
+qqnorm(randoms2)
+qqline(randoms2)
 ```
 
 # Damping Modeling
