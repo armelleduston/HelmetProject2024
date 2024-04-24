@@ -57,6 +57,30 @@ qqnorm(randoms2)
 qqline(randoms2)
 ```
 
+\begin{table}[h]
+\begin{tabular}{llllll}
+Variable Name & Estimate & Std. Error & df & t-value & p-value \\
+Intercept & 0.9993 & 0.0247 & 44.3478 & 40.399 & <2e-16 \\
+porosity81 & 0.0046 & 0.0063 & 39.6971 & 0.733 & 0.46808 \\
+freq & -0.0021 & 0.0005 & 36.4999 & -4.059 & 0.00025 \\
+amp & -1.4518 & 0.2289 & 33.6911 & -6.342 & 3.23e-07 \\
+chemIndex100 & 0.0549 & 0.0390 & 39.2014 & 1.408 & 0.16694 \\
+chemIndex121 & 0.0652 & 0.0371 & 38.7440 & 1.758 & 0.08666 \\
+log(cycleNum) & 0.0055 & 0.0034 & 42.7687 & 1.511 & 0.13808 \\
+chemIndex100:log(cycleNum) & -0.0102 & 0.0060 & 42.5002 & -1.713 & 0.09398 \\
+chemIndex121:log(cycleNum) & -0.0165 & 0.0057 & 42.3445 & -2.890 & 0.00605 \\
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\begin{tabular}{lllll}
+Groups & Name & Variance & Std. Deviation & corr \\
+SampleNum & Intercept & 0.0107280 & 0.103576 &  \\
+ & log(cycleNum) & 0.0002595 & 0.016109 & -0.98 \\
+Residual &  & 0.0000355 & 0.005958 & 
+\end{tabular}
+\end{table}
+
 # Damping Modeling
 
 ## Theoretical Model:
@@ -78,3 +102,30 @@ plot(dampModel)
 
 anova(dampModel,dampModelci)
 ```
+
+```{=tex}
+\begin{table}[h]
+\begin{tabular}{llllll}
+Variable Name & Estimate & Std. Error & df & t-value & p-value \\
+Intercept & 0.9830 & 0.0212 & 23.1718 & 46.333 & <2e-16 \\
+porosity81 & 2=0.0133 & 0.00050 & 29.7768 & 2.650 & 0.01275 \\
+freq & 0.0051 & 0.0016 & 17.5604 & 3.250 & 0.00456 \\
+amp & 1.7358 & 0.7367 & 17.323 & 2.356 & 0.03047 \\
+ & 2 &  Quantitative - Initial deformation of the foam\\
+chemIndex100 & -0.0026 & 0.0067 & 32.3206 & -.383 & 0.70445 \\
+chemIndex121 & 0.0003 & 0.0057 & 26.6873 & 0.059 & 0.95301 \\
+strainRate & -0.0270 & 0.0154 & 17.3148 & -1.753 & 0.09727 \\
+log(cycleNum) & -0.0104 & 0.0014 & 43.7101 & -7.222 & 5.61e-09
+\end{tabular}
+\end{table}
+```
+
+\begin{table}[h]
+\begin{tabular}{lllll}
+Groups & Name & Variance & Std. Deviation & corr \\
+SampleNum & Intercept & 2.045e-03 & 0.045219 &  \\
+ & log(cycleNum) & 8.132e-05 & 0.009018 & -0.97 \\
+Residual &  & 8.845e-05 & 0.009405 & 
+\end{tabular}
+\end{table}
+
