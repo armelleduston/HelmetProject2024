@@ -22,6 +22,12 @@ helmet <- helmet |>
 
 ## Theoretical Model:
 
+$a_i=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+\alpha_5I(porosity=81)+u_i$
+
+$b_i=\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i$
+
+$stiffnessFraction_{ij}=a_i+b_ilog(cycleNum)$
+
 $stiffnessFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+\alpha_5I(porosity=81)+(\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
 
 ## Code:
@@ -57,6 +63,7 @@ qqnorm(randoms2)
 qqline(randoms2)
 ```
 
+```{=tex}
 \begin{table}[h]
 \begin{tabular}{llllll}
 Variable Name & Estimate & Std. Error & df & t-value & p-value \\
@@ -71,7 +78,8 @@ chemIndex100:log(cycleNum) & -0.0102 & 0.0060 & 42.5002 & -1.713 & 0.09398 \\
 chemIndex121:log(cycleNum) & -0.0165 & 0.0057 & 42.3445 & -2.890 & 0.00605 \\
 \end{tabular}
 \end{table}
-
+```
+```{=tex}
 \begin{table}[h]
 \begin{tabular}{lllll}
 Groups & Name & Variance & Std. Deviation & corr \\
@@ -80,7 +88,7 @@ SampleNum & Intercept & 0.0107280 & 0.103576 &  \\
 Residual &  & 0.0000355 & 0.005958 & 
 \end{tabular}
 \end{table}
-
+```
 # Damping Modeling
 
 ## Theoretical Model:
@@ -119,7 +127,7 @@ log(cycleNum) & -0.0104 & 0.0014 & 43.7101 & -7.222 & 5.61e-09
 \end{tabular}
 \end{table}
 ```
-
+```{=tex}
 \begin{table}[h]
 \begin{tabular}{lllll}
 Groups & Name & Variance & Std. Deviation & corr \\
@@ -128,4 +136,4 @@ SampleNum & Intercept & 2.045e-03 & 0.045219 &  \\
 Residual &  & 8.845e-05 & 0.009405 & 
 \end{tabular}
 \end{table}
-
+```
