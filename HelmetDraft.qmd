@@ -1,6 +1,6 @@
 ---
 title: "Helmet Report"
-author: Armelle Duston, Emily Younger, Allison Comer
+author: Allison Comer, Armelle Duston, Emily Younger
 format: pdf
 ---
 
@@ -59,6 +59,8 @@ The two explanatory variables are defined using the stiffness and damping values
 $\text{stiffness fraction}=\frac{\text{stiffness at current cycle}}{\text{stiffness at cycle 1}}$
 
 $\text{damping fraction}=\frac{tan(\text{damping at current cycle})}{tan(\text{damping at cycle 1})}$
+
+\newpage
 
 As a note, we have excluded the observations at cycle 1 in our analysis since both response variables will always be equal to 1 at cycle 0.
 
@@ -129,7 +131,7 @@ Due to how there seem to be differences in the stiffness fraction for different 
 ggplot(subset(data, cycleNum == 10000),
        aes(x = porosity, y = dampFrac, fill = chemIndex)) + 
   geom_boxplot()+
-  ggtitle("Damping Fraction at Cycle")
+  ggtitle("Damping Fraction at Cycle 1000")
 ```
 
 The boxplot of damping fraction for different combinations of porosity and chemical index shows that there are major differences in medians and ranges as porosity and chemical index change. The median damping fraction for porosity 81 and chemical indexes 100 and 121 tend to be higher than the same chemical indexes with 71 porosity. The inter-quartile range for porosity 79 and 121 is larger than for porosity 81, showing the variation in damping fraction changes for different combinations of porosity and chemical index. Chemical index 79 has a higher median for porosity 71. These differences indicate an interaction term may be present between the two predictors. 
