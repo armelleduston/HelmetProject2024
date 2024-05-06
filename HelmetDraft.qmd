@@ -20,7 +20,7 @@ library(lme4)
 
 # Project Description
 
-In this project, we analyze the results of an experiment designed to assess the behavior of different types of foam after many impacts. We are particularly interested in studying the behavior of  2 different porosities and 3 different chemical indexes. Each type of foam (which includes every combination of porosity and chemical index) underwent 10,000 or more oscillations, and measurements were taken at specified intervals to determine stiffness and damping. Data was collected for different amplitudes and frequencies of oscillations and at different initial strains. Our aim is to account for the effects of the conditions of the experiment in order to pick out the effects of porosity and/or chemical index on stiffness fraction and damping fraction over cycle count. These results will ultimately have important implications for the optimal foam used in military-grade helmets. 
+In this project, we analyze the results of an experiment on the behavior of different types of foam after many impacts. We are particularly interested in studying the behavior of  two different porosities and three different chemical indexes. Each type of foam (which includes every combination of porosity and chemical index) underwent 10,000 or more oscillations, and measurements were taken at specified intervals to determine stiffness and damping. Data was collected for different amplitudes and frequencies of oscillations and at different initial strains. Our aim is to account for the effects of the conditions of the experiment to isolate the effects of porosity and chemical index on stiffness fraction and damping fraction over cycle count. These results will ultimately have important implications for the optimal foam used in military-grade helmets.  
 
 
 # Research Questions
@@ -31,6 +31,7 @@ In this project, we analyze the results of an experiment designed to assess the 
 
 
 # Variables
+The possible explanatory variables are shown in the table below. The table includes the variable and its corresponding level it is defined for multi-level modeling. 
 
 
 ```{=tex}
@@ -41,13 +42,13 @@ In this project, we analyze the results of an experiment designed to assess the 
 Variable Name & Level & Notes \\
 Cycle Number (cycleNum) & 1 &  Quantitative- an index of where the current cycle observation begins. \\
  & & Each cycle number includes the following 100 oscillations\\
-Sample Number (sampleNum) & 2 & Quantitative - ID number of the sample \\
+Sample Number (sampleNum) & 2 & Label - ID number of the sample \\
 Porosity (porosity) & 2 & Categorical - 71 is less dense and 81 is more dense \\
+Chemical Index (chemIndex) & 2 & Categorical - ratio of amounts of chemicals in the foam sample \\
 Frequency (freq) & 2 & Quantitative - Rate of oscillations \\
 Amplitude (amp) & 2 & Quantitative - Height of the oscillations \\
 Initial Strain (strain) & 2 &  Quantitative - Initial deformation of the foam\\
 Initial Stress (stresskpa) & 2 & Quantitative - Initial amount of stress in the foam \\
-Chemical Index (chemIndex) & 2 & Categorical - ratio of amounts of chemicals in the foam sample \\
 Strain Rate (strainRate) & 2 & Quantitative - Defined as 4$\times$frequency$\times$amplitude
 \end{tabular}
 \end{table}
@@ -81,21 +82,23 @@ stiffModelp <- lmer(stiffFrac~chemIndex*log(cycleNum)+freq + amp + porosity + (l
 dampModelci <- lmer(dampFrac ~ porosity + freq + amp + chemIndex + log(cycleNum)+(log(cycleNum)|sampleNum),data=data)
 ```
 
+To get an idea of which explanatory variables we may want to include in our models, we calculated correlations between each possible predictor and both of our response variables. 
 
+```{=tex}
 
-
-```{r, fig.width=9, fig.height=6, echo = FALSE}
-#| fig-cap: "Correlation, distribution and scatterplots of continuous vairables"
-
-sub <- subset(data, select = -c(sampleNum, cycleLet, damping, nonlinear, stiffness, porosity, chemIndex))
-
-ggpairs(sub, progress = FALSE)+
-  theme(axis.text = element_text(size = 8))
+\begin{table}[h]
+\caption{Explanatory variables correlation to predictors, stiffness fraction and damping fraction.}
+\begin{tabular}{lllllll} 
+Response & freq & amp & strain & stresskpa & cycleNum & strainRate \\
+Stiffness Fraction & -0.517 &  -0.588 & -0.019 & 0.269 & 0.036 & -0.683 \\
+Damping Fraction & 0.724 & 0.426 & -0.039 & 0.288 & -0.252 & 0.695
+\end{tabular}
+\end{table}
 
 ```
 
 
- As shown in the continuous variable correlation and distribution matrix above, stiffness fraction is highly correlated with frequency, amplitude, stresskpa and strain rate with values of -0.493, -0.559, 0.255 and -0.650. This shows that there is a strong negative relationship for stiffness fraction and frequency, amplitude and strain rate individually, then a weaker positive, linear relationship between stiffness fraction and stresskpa. 
+As shown in the Table 2, stiffness fraction is highly correlated with frequency, amplitude, stresskpa and strain rate with values of -0.493, -0.559, 0.255 and -0.650. This shows that there is a strong negative relationship for stiffness fraction and frequency, amplitude and strain rate individually, then a weaker positive, linear relationship between stiffness fraction and stresskpa. 
 Damping fraction is highly correlated with frequency, amplitude, stresskpa, cycle number, and strain rate with values of 0.676, 0.399, 0.270, -0.311 and 0.649. There is a positive linear relationship for damping fraction when looking at frequency, amplitude, stresskpa, and strain rate individually, with strong relationships for frequency and strain rate, and moderate strength for amplitude and stresskpa. Damping fraction and cycle number have a negative, moderate, linear relationship. 
 
 
@@ -186,7 +189,8 @@ grid.arrange(plot1, plot3, plot5, plot2, plot4, plot6, nrow = 2, ncol = 3)
 
 ```
 
-In this plot, we can observe each sample’s stiffness fraction over log(cycleNum). We chose to use a log transform on the cycleNum because the stiffness fraction was more linear as a function of log(cycleNum) rather than raw cycleNum.  As a result, we had to omit the cycle 0 entry, since log(0) is undefined. However, we do not lose any information by doing so, since the stiffness fraction at cycle 0 is by definition always 1. However, one consequence of removing the first observation is that the second observations do not all start at the same value, so some of our curves start earlier than others. Also note that the points are fit with smooth curves, so samples with a lot of noise will have points farther from the line while very smooth samples will appear to be interpolated almost perfectly by the curve. 
+In this plot, we can observe each sample’s stiffness fraction over log(cycleNum). We chose to use a log transform on the cycleNum because the stiffness fraction was more linear as a function of log(cycleNum) rather than raw cycleNum.  As a result, we had to omit the cycle 0 entry, since log(0) is undefined. However, we do not lose any information by doing so, since the stiffness fraction at cycle 0 is by definition always 1. However, one consequence of removing the first observation is that the second observations do not all start at the same value, so some of our curves start earlier than others. The points are fit with smooth curves, so samples with a lot of noise will have points farther from the line while very smooth samples will appear to be interpolated almost perfectly by the curve. 
+
 Although not all of the curves are perfectly linear, by and large they seem to be reasonable to model with linear regression. By splitting the curves up by chemical index and porosity, we can also see different trends with respect to those variables. For example, the samples with porosity 71 and chemical index 79 appear to have relatively constant stiffness fraction with a few deviations. By contrast, the stiffness fraction for samples with porosity 81 and chemical index 79 tends to increase with cycleNum. 
 
 ```{r, echo = FALSE}
@@ -245,7 +249,7 @@ grid.arrange(plot1, plot3, plot5, plot2, plot4, plot6, nrow = 2, ncol = 3)
 
 ```
 
-We produced the same visualization as above but for damping fraction instead of stiffness fraction. Like before, we use log(cycleNum) to help with the linearity of damping fraction. One noticeable difference between damping fraction and stiffness fraction is the amount of noise in the data. We can see that there are many more curves where the points are scattered in an unpredictable manner. However, omitting the samples with obvious noisiness, the smoother samples all appear to be reasonable to model with linear regression. Due to the noise, it’s somewhat more difficult to see clear trends in the data, but we do see that damping fraction appears to decrease over cycleNum for most of the samples, but this is most clear in the samples with porosity 71 and chemical index 121. 
+We produced the same visualization as above but for damping fraction instead of stiffness fraction. Like before, we use log(cycleNum) to help with the linearity of damping fraction. One noticeable difference between damping fraction and stiffness fraction is the amount of noise in the data. We can see that there are many more curves where the points are scattered in an unpredictable manner. However, omitting the samples with obvious noisiness, the smoother samples all appear to be reasonable to model with linear regression. Due to the noise, it’s somewhat more difficult to see clear trends in the data, but we do see that damping fraction appears to decrease over cycleNum for most of the samples, but this is most clear in the samples with porosity 71 and chemical index 121. Given the small amount of data, we chose to leave all samples in for model fitting. 
 
 # Statistical Analysis
 
@@ -255,9 +259,15 @@ We produced the same visualization as above but for damping fraction instead of 
 We modeled stiffness fraction using a linear mixed-effects model. This is similar to a linear regression framework but it also allows us to account for the correlation between measurements of the same sample. In this type of model, we have fixed effects and random effects. Fixed effects are population-wide estimates for the relationship between a predictor and response variable, while random effects are individual (in this case, for an individual sample) estimates for the relationship between a predictor and response variable. The theoretical model is written below: 
 
 Equation:
-$stiffnessFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+\alpha_5I(porosity=81)+(\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
+$a_i=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+\alpha_5I(porosity=81)+u_i$
 
-In this model, we use frequency, amplitude, chemical index, porosity, and log(cycle number) to predict stiffness fraction. The only variable which shows up as both a fixed effect and a random effect is log(cycle number), while all of the other predictors are purely fixed effects. We also include an interaction between chemical index and cycle number, which allows us to see that the relationship between chemical index and stiffness fraction is different depending on the cycle number. We investigated an interaction term between chemical index and porosity, since our EDA indicated that such an interaction may be present, but the terms were not significant and so we did not include it in our final model. 
+$b_i=\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i$
+
+$stiffnessFraction_{ij}=a_i+b_ilog(cycleNum)+\epsilon_{ij}$
+
+
+In this model, we use frequency, amplitude, chemical index, porosity, and log(cycle number) to predict stiffness fraction. We also include an interaction between chemical index and cycle number, since the relationship between cycle number and stiffness fraction is different depending on chemical index. We investigated an interaction term between chemical index and porosity, since our EDA indicated that such an interaction may be present, but the terms were not significant and so we did not include it in our final model. The random effects, $u_i$ and $v_i$ allow for each sample’s intercept and slope to vary respectively. We are assuming that the slopes for each sample will vary differently based on the log(cycleNum).
+
 
 
 Random Effects: 
@@ -290,17 +300,23 @@ chemIndex121:log(cycleNum) & -0.0165 & 0.0057 & 42.3445 & -2.890 & 0.00605 \\
 
 \newpage
 
-In our model for stiffness fraction, frequency, amplitude, and the interaction between chemical index and log(cycle number) had significant p-values (meaning that the estimate for the slope associated with each of those predictors are significantly different from zero). Chemical index, log(cycle number), and porosity did not have significant p-values. 
+In our model for stiffness fraction, frequency, amplitude, and the interaction between chemical index and log(cycle number) had significant p-values (meaning that the estimate for the coefficient each of those predictors are significantly different from zero). Chemical index, log(cycle number), and porosity did not have significant p-values. We calculated the conditional R^2 for this model to be 0.9897, which is how much of the variance in the data is being explained by the model (including both fixed and random effects). 
 
-Going through each slope coefficient one-by-one: chemIndex100 has a slope of 0.055 meaning that the predicted stiffness fraction of chemical index 100 is 0.055 more than for chemical index 79 holding all other variables constant. Likewise, for chemIndex121, its slope of 0.065 means that the predicted stiffness fraction for chemical index 121 is 0.065 greater than for chemical index 79 holding all other variables constant. However, the relatively large p-values associated with these slopes mean that these comparisons are not statistically meaningful. Porosity is also a categorical variable, so it can be interpreted in a similar way (comparing porosity 81 to porosity 71). Since log(cycle number), frequency, and amplitude are all continuous variables, they are interpreted in the following manner: given a unit increase in log(cyclNm), the predicted stiffness fraction increases by 0.0055, holding all other variables constant (and likewise for frequency and amplitude). The significant p-value associated with the interaction term indicates that the relationship between chemical index and predicted stiffness fraction depends on the log(cycle number). Specifically, for each unit increase in log(cyclNm), the predicted stiffness fraction is 0.016 less for chemical index 121 compared to chemical index 79. A similar interpretation can be applied to the slope for the interaction between chemical index 100 and log(cycle number). 
+Going through each slope coefficient one-by-one: chemIndex100 has a coefficient of 0.055 meaning that the predicted stiffness fraction of chemical index 100 is 0.055 more than for chemical index 79 holding all other variables constant. Likewise, for chemIndex121, its slope of 0.065 means that the predicted stiffness fraction for chemical index 121 is 0.065 greater than for chemical index 79 holding all other variables constant. However, the relatively large p-values associated with these slopes mean that these comparisons are not statistically meaningful. Porosity is also a categorical variable, so it can be interpreted in a similar way (comparing porosity 81 to porosity 71). Since log(cycle number), frequency, and amplitude are all continuous variables, they are interpreted in the following manner: given a unit increase in log(cyclNm), the predicted stiffness fraction increases by 0.0055, holding all other variables constant (and likewise for frequency and amplitude). The significant p-value associated with the interaction term indicates that the relationship between chemical index and predicted stiffness fraction depends on the log(cycle number). Specifically, for each unit increase in log(cyclNm), the predicted stiffness fraction is 0.016 less for chemical index 121 compared to chemical index 79. A similar interpretation can be applied to the coefficient for the interaction between chemical index 100 and log(cycle number). 
 
 ### Damping Model Description
 
 
-We modeled the damping fraction using a linear mixed-effects model. In this model, we included frequency, amplitude, porosity, and chemical index as covariates. The log(cycle number) is included as both a random effect and as a fixed effect in this model. Based on our EDA, we had tried an interaction term between chemical index and porosity, but similarly to the stiffness model, these terms were not significant. The theoretical model is below:
+We modeled the damping fraction using a linear mixed-effects model. In this model, we included frequency, amplitude, porosity, and chemical index as covariates. The log(cycle number) is included as both a random effect and as a fixed effect in this model. Based on our EDA, we had tried an interaction term at the intercept level between chemical index and porosity, but similarly to the stiffness model, these terms were not significant. Again, $u_i$ allows the intercept of each sample to vary and $v_i$ allows the slope to vary for each sample. We are assuming that every sample has the same global slope for damping since we did not include any covariates within our random slopes equation. Based on our EDA, this assumption seems reasonable. The theoretical model is below:
 
 
-Equation: $DampingFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_4I(porosity=81)+\alpha_5I(chemIndex=100)+\alpha_6I(chemIndex=121)+(\beta_0+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
+Equation: 
+$a_i=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+\alpha_5I(porosity=81)+\alpha_6strainRate+u_i$
+
+$b_i=\beta_0+v_i$
+
+$dampingFraction_{ij}=a_i + b_icycleNum + \epsilon_{ij}$
+
 
 The fitted model output is shown in the table below.
 
@@ -332,7 +348,7 @@ log(cycleNum) & -0.0104 & 0.0014 & 43.7101 & -7.222 & 5.61e-09
 \end{table}
 
 
-In this model, the terms for porosity, frequency, amplitude, strain rate, and the log of the cycle number are significant. The terms for chemical index are not significant, but we chose to include these terms due to the client’s specific interest in this variable. The modeling assumptions are verified in the appendix. 
+In this model, the terms for porosity, frequency, amplitude, strain rate, and the log of the cycle number are significant. The terms for chemical index are not significant, but we chose to include these terms due to the client’s specific interest in this variable. The modeling assumptions are verified in the appendix. For this model, we calculated conditional R^2 to be 0.9505.
 
 For answering question 1, we will focus on the coefficients for porosity and chemical index. From our model we can say that foam with a porosity of 81 has a damping fraction that is 0.0133 more than foam with a porosity of 71, keeping all other variables constant. We can conclude then that at the 95% level, foams with a porosity of 81 perform better in terms of damping than foams with porosity of 71. Compared to the chemical index of 79 and while keeping all other terms in the model constant, foam with a chemical index of 100 have a damping fraction that is 0.0026 less and foam with a chemical index of 121 have a damping fraction 0.00034 more. Then, we can say that foam with a chemical index of 100 performs worse than foam with chemical indexes of 79 and 121 and that foam with chemical index 121 performs better than foam with chemical index 71. However, the coefficient estimates for chemical indexes are not significant in the model, so we cannot make these conclusions with any level of confidence. 
 
@@ -349,11 +365,13 @@ At the 90% level, the damping fraction decreases by 0.0269 for every 1 increase 
 
 **Question 1:** How do porosity and chemical index affect stiffness fraction and damping fraction throughout 10,000 cycles?
 
+Stiffness fraction may be impacted by porosity, specifically foam with a porosity of 81 tends to perform better over 10,000 cycles than foam of porosity 71. However, porosity is not a significant term in the model, so this conclusion cannot be made with confidence.
 Damping fraction is significantly impacted by porosity, specifically foam with a porosity of 81 tends to perform better over 10,000 cycles than foam of porosity 71. Our model results do not support chemical index being a significant factor in affecting the damping fraction and therefore we are unable to make any confident conclusions.
 
 
 **Question 2:** Under which conditions are stiffness and damping most consistent? 
 
+The stiffness fraction of foam behaves more consistently for a chemical index of 79.  Stiffness will also be more consistent for smaller frequencies and amplitudes, where lower amplitudes will be more beneficial than lower frequencies.
 The damping fraction of foam behaves more consistently at conditions of higher amplitude and frequency up to a certain point at which the strain rate will counteract this consistency. The damping fraction will also be more consistent for foams of porosity 81 or of chemical index 121. 
 
 
@@ -382,7 +400,7 @@ In order to extend the conclusions of this study to the larger population of foa
 
 
 ### Noise in Data
-Given the noise present in the data due to an adjacent machine, this affected data may change the accuracy of our model. Specifically, since the adjacent machine was working in the later sample numbers, it creates a lack of randomness in the noise which in turn could create issues with equal variance and normality of residuals if persistent. 
+Given the noise present in the data due to an adjacent machine, this affected data may change the accuracy of our model. Specifically, since the adjacent machine was working in the later sample numbers, it creates structured noise which in turn could create issues with equal variance and normality of residuals if persistent. 
 
 ### Unequal Sample Groups
 In this study, there are combinations of porosity and chemical index that are underrepresented. The difference between groups doesn’t affect modeling, but a lack of data for a group to accurately fit a model on can lead to less accurate results. The porosity 71 and chemical index 100 group only has 5 samples, then porosity 81 and chemical index 121 has only 6 samples. Overall, the sample numbers range from 5 to 11, demonstrating the scarcity of data for individual groups. This is a larger concern with the noise present in the data from the adjacent machine. The model may pick up on the noise instead of the true trend when less data is available for fitting. 
