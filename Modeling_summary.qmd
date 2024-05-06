@@ -26,7 +26,7 @@ $a_i=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIn
 
 $b_i=\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i$
 
-$stiffnessFraction_{ij}=a_i+b_ilog(cycleNum)$
+$stiffnessFraction_{ij}=a_i+b_ilog(cycleNum)+\epsilon_{ij}$
 
 $stiffnessFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+\alpha_5I(porosity=81)+(\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
 
@@ -94,6 +94,12 @@ Residual &  & 0.0000355 & 0.005958 &
 ## Theoretical Model:
 
 $DampingFraction_{ij}=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3strainRate+\alpha_4I(porosity=81)+\alpha_5I(chemIndex=100)+\alpha_6I(chemIndex=121)+(\beta_0+v_i)log(cycleNum)+u_i+\epsilon_{ij}$
+
+$a_i=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+\alpha_5I(porosity=81)+\alpha_6strainRate+u_i$
+
+$b_i=\beta_0+v_i$
+
+$dampingFraction_{ij}=a_i + b_icycleNum + \epsilon_{ij}$
 
 ## Code:
 
