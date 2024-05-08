@@ -62,7 +62,7 @@ $\text{damping fraction}=\frac{tan(\text{damping at current cycle})}{tan(\text{d
 
 \newpage
 
-As a note, we have excluded the observations at cycle 1 in our analysis since both response variables will always be equal to 1 at cycle 0.
+As a note, we have excluded the observations at cycle 0 in our analysis since both response variables will always be equal to 1 at cycle 0.
 
 # EDA
 
@@ -261,6 +261,7 @@ We produced the same visualization as above but for damping fraction instead of 
 We modeled stiffness fraction using a linear mixed-effects model. This is similar to a linear regression framework but it also allows us to account for the correlation between measurements of the same sample. In this type of model, we have fixed effects and random effects. Fixed effects are population-wide estimates for the relationship between a predictor and response variable, while random effects are individual (in this case, for an individual sample) estimates for the relationship between a predictor and response variable. The theoretical model is written below: 
 
 Equation:
+
 $a_i=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+\alpha_5I(porosity=81)+u_i$
 
 $b_i=\beta_0+\beta_1I(chemIndex=100)+\beta_2I(chemIndex=121)+v_i$
@@ -313,6 +314,7 @@ We modeled the damping fraction using a linear mixed-effects model. In this mode
 
 
 Equation: 
+
 $a_i=\alpha_0+\alpha_1freq+\alpha_2amp+\alpha_3I(chemIndex=100)+\alpha_4I(chemIndex=121)+\alpha_5I(porosity=81)+\alpha_6strainRate+u_i$
 
 $b_i=\beta_0+v_i$
